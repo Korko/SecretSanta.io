@@ -2,7 +2,6 @@ var $ = require('jquery');
 require('jquery-ui-browserify');
 
 var alertify = require('alertify.js');
-var SmsTools = require('./smsTools.js');
 
 var Vue = require('vue');
 var VueAutosize = require('vue-autosize');
@@ -32,7 +31,6 @@ window.app = new VueAjax({
         return {
           name: '',
           email: '',
-          phone: '',
           exclusions: []
         };
       },
@@ -48,15 +46,6 @@ window.app = new VueAjax({
             }
           }.bind(this));
           return names;
-        },
-        phoneNumber: function() {
-          if(this.phone.length) {
-            return this.phone[0] === '0' ?
-              this.phone.match(/[0-9]{1,2}/g).join(' ') :
-              [this.phone[0]].concat(this.phone.slice(1).match(/[0-9]{1,2}/g)).join(' ');
-          } else {
-            return this.phone;
-          }
         }
       },
       watch: {
@@ -65,9 +54,6 @@ window.app = new VueAjax({
         },
         email: function() {
           this.$emit('changeemail', this.email);
-        },
-        phone: function() {
-          this.$emit('changephone', this.phone);
         }
       }
     }
@@ -83,32 +69,12 @@ window.app = new VueAjax({
       return used;
     },
 
-    phoneUsed: function() {
-      var used = false;
-      for(var i in this.participants) {
-        used = used || (this.participants[i].phone !== '');
-      }
-      return used;
-    },
-
     allMails: function() {
       var allMails = true;
       this.participants.forEach(function(participant) {
         allMails = (allMails && (participant.name === '' || participant.email !== ''));
       });
       return allMails;
-    },
-
-    smsCount: function() {
-      return Math.min(SmsTools.chunk(this.smsContent).length, this.maxSms);
-    },
-
-    charactersLeft: function() {
-      return SmsTools.chunkMaxLength(this.smsContent, this.smsCount, true) - this.smsContent.length;
-    },
-
-    maxLength: function() {
-      return SmsTools.chunkMaxLength(this.smsContent, this.maxSms, true);
     }
 
   },
@@ -169,7 +135,6 @@ window.app = new VueAjax({
       this.participants.push({
         name: '',
         email: '',
-        phone: '',
         id: 'id' + this.participants.length + (new Date()).getTime()
       });
     }

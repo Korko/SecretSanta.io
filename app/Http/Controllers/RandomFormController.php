@@ -10,7 +10,6 @@ use Korko\SecretSanta\Http\Requests\RandomFormRequest;
 use Korko\SecretSanta\Mail\TargetDrawn;
 use Korko\SecretSanta\Participant;
 use Mail;
-use Sms;
 use Statsd;
 
 class RandomFormController extends Controller
@@ -48,7 +47,6 @@ class RandomFormController extends Controller
     {
         $names = $request->input('name');
         $emails = $request->input('email');
-        $phones = $request->input('phone');
         $exclusions = $request->input('exclusions', []);
 
         $participants = [];
@@ -56,7 +54,6 @@ class RandomFormController extends Controller
             $participants[$i] = [
                 'name'       => $names[$i],
                 'email'      => $emails[$i],
-                'phone'      => $phones[$i] ? str_pad($phones[$i], 10, '0', STR_PAD_LEFT) : $phones[$i],
                 'exclusions' => (isset($exclusions[$i])) ? array_map('intval', $exclusions[$i]) : [],
             ];
         }
@@ -84,15 +81,8 @@ class RandomFormController extends Controller
             $dearSantaLink = $this->getDearSantaLink($santa, $request->input('dearsanta-expiration'));
         }
 
-        if (!empty($santa['email'])) {
-            Statsd::increment('email');
-            $this->sendMail($santa, $target, $request->input('title'), $request->input('contentMail'), $dearSantaLink);
-        }
-
-        if (!empty($santa['phone'])) {
-            Statsd::increment('phone');
-            $this->sendSms($santa, $target, $request->input('contentSMS'));
-        }
+        Statsd::increment('email');
+        $this->sendMail($santa, $target, $request->input('title'), $request->input('contentMail'), $dearSantaLink);
     }
 
     protected function getDearSantaLink(array $santa, $expirationDate)
@@ -140,13 +130,5 @@ class RandomFormController extends Controller
             PHP_EOL.trans('form.mail.post');
 
         Mail::to($santa['email'], $santa['name'])->send(new TargetDrawn($santa, $target, $title, $content, $dearSantaLink));
-    }
-
-    protected function sendSms(array $santa, array $target, $content)
-    {
-        $contentSms = str_replace(['{SANTA}', '{TARGET}'], [$santa['name'], $target['name']], $content);
-        $contentSms .= PHP_EOL.trans('form.sms.post');
-
-        Sms::message($santa['phone'], $contentSms);
     }
 }

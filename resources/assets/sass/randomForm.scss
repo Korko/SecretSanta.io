@@ -121,22 +121,6 @@ fieldset > div.form-group {
 #mailPost.extended {
     height: 75px;
 }
-#smsContent, #mailContent {
-    border-bottom: 0;
-    border-bottom-right-radius: 0;
-    border-bottom-left-radius: 0;
-}
-#smsPost, #mailPost {
-    border-top: 0;
-    border-top-right-radius: 0;
-    border-top-left-radius: 0;
-}
-#smsContent, #smsPost {
-    resize: none;
-}
-#smsPost {
-    height: 35px;
-}
 #form .container {
     -webkit-transition: all 0.4s;
     -moz-transition: all 0.4s;
@@ -187,7 +171,6 @@ button .glyphicon.spinning {
         -webkit-box-sizing: border-box;
         -moz-box-sizing: border-box;
         box-sizing: border-box;
-        border-right: 2px solid #ccc;
     }
 }
 @media (max-width: 1199px) {

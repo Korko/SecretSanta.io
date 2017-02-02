@@ -5,7 +5,6 @@
 
     <!-- config js -->
     @javascript([
-        'maxSms' => config('sms.max'),
         'now'    => time()
     ])
 @stop
@@ -146,10 +145,8 @@
                                 <table id="participants" class="table table-hover table-striped table-numbered">
                                     <thead>
                                         <tr>
-                                            <th class="col-lg-3">@lang('form.participant.name')</th>
-                                            <th class="col-lg-3">@lang('form.participant.email')</th>
-                                            <th class="col-lg-0"></th>
-                                            <th class="col-lg-3">@lang('form.participant.phone')</th>
+                                            <th class="col-lg-4">@lang('form.participant.name')</th>
+                                            <th class="col-lg-4">@lang('form.participant.email')</th>
                                             <th class="col-lg-2">@lang('form.participant.exclusions')</th>
                                             <th class="col-lg-1"></th>
                                         </tr>
@@ -162,7 +159,6 @@
                                             :idx="idx"
                                             @changename="participant.name = $event"
                                             @changeemail="participant.email = $event"
-                                            @changephone="participant.phone = $event"
                                             @delete="participants.splice(idx, 1)">
                                         </tr>
                                     </tbody>
@@ -174,7 +170,7 @@
                         <fieldset>
                             <legend>Messages</legend>
                             <div class="row" id="contact">
-                                <fieldset id="form-mail-group" class="col-md-6" :disabled="!this.emailUsed">
+                                <fieldset id="form-mail-group" :disabled="!this.emailUsed">
                                     <div class="form-group">
                                         <label for="mailTitle">@lang('form.mail.title')</label>
                                         <input id="mailTitle" type="text" name="title" :required="this.emailUsed" placeholder="@lang('form.mail.title.placeholder')" value="" class="form-control" />
@@ -188,28 +184,12 @@
                                         <p class="help-block">@lang('form.mail.content.tip2')</p>
                                     </div>
                                 </fieldset>
-
-                                <fieldset id="form-sms-group" class="col-md-6" :disabled="!this.phoneUsed">
-                                    <div class="form-group">
-                                        <label for="smsContent" v-if="smsCount <= 1">@lang('form.sms.content', ['count' => '@{{ smsCount }}', 'span' => '<span class="tip" :class="charactersLeft < 0 ?  \'text-danger\' : \'\'">', 'espan' => '</span>', 'left' => '@{{ charactersLeft }}'])</label>
-                                        <label for="smsContent" v-else>@lang('form.sms.content.multiple', ['count' => '@{{ smsCount }}', 'span' => '<span class="tip" :class="charactersLeft < 0 ?  \'text-danger\' : \'\'">', 'espan' => '</span>', 'left' => '@{{ charactersLeft }}'])</label>
-                                        <textarea id="smsContent" name="contentSMS" :required="this.phoneUsed" :maxlength="maxLength" placeholder="@lang('form.sms.content.placeholder')" class="form-control" rows="3" v-model="smsContent" v-autosize></textarea>
-                                        <textarea id="smsPost" class="form-control" read-only disabled>@lang('form.sms.post')</textarea>
-
-                                        <p class="help-block">@lang('form.sms.content.tip1')</p>
-                                        <p class="help-block">@lang('form.sms.content.tip2')</p>
-                                    </div>
-                                </fieldset>
                             </div>
                         </fieldset>
                         <fieldset>
                             <legend>Options</legend>
                             <div id="form-options" class="form-group">
                                 <label><input type="checkbox" name="dearsanta" v-model="dearsanta" value="1"/> Autoriser les participants à écrire un mail à leur secret santa</label>
-                                <p class="tip" role="alert">
-                                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                                    Cette option implique que chaque participant dispose d'une adresse mail remplie
-                                </p>
                                 <label><input type="date" name="dearsanta-expiration" :min="date | moment(1, 'day')" :max="date | moment(1, 'year')" :disabled="!dearsanta" /> Date limite de stockage des emails</label>
                             </div>
                         </fieldset>
